@@ -64,6 +64,6 @@ export const print = (secret: BinaryLike, digits: number, algorithm: HMACAlgorit
 
     setTimeout(() => {
         execute();
-        setInterval(execute, 30_000);
-    }, 30_000 - Date.now() % 30_000);
+        setInterval(execute, timeStep * 1_000);
+    }, (timeStep * 1_000) - Date.now() % (timeStep * 1_000));
 };
