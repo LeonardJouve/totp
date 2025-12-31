@@ -116,7 +116,7 @@ describe("hotp", () => {
         });
     });
     it("totp now", async () => {
-        const secret = "12345678901234567890";
+        const secret = crypto.randomUUID();
         const digits = 6;
 
         const response = await fetch("https://authenticationtest.com/totp/", {
