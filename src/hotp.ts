@@ -48,7 +48,22 @@ export const hotp = (secret: BinaryLike, digits: number, step: number) => {
     return format(result, digits);
 };
 
+// TODO select algo
 export const totp = (secret: BinaryLike, digits: number, time: number = Math.floor(Date.now() / 1_000), timeStep: number = 30, initialTime: number = 0) => {
     const step = Math.floor((time - initialTime) / timeStep);
     return hotp(secret, digits, step);
+};
+
+export const print = (secret: BinaryLike, digits: number, time: number = Math.floor(Date.now() / 1_000), timeStep: number = 30, initialTime: number = 0) => {
+    const execute = () => {
+        const result = totp(secret, digits, time, timeStep, initialTime);
+        console.log(result);
+    };
+
+    execute();
+
+    setTimeout(() => {
+        execute();
+        setInterval(execute, 30_000);
+    }, 30_000 - Date.now() % 30_000);
 };

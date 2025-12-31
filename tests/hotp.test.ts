@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import {describe, it} from "node:test";
+import {base32} from "@scure/base";
 import {numberToBigEndianArray, hmac, HMACAlgorithm, truncate, format, totp} from "../src/hotp";
 
 describe("hotp", () => {
@@ -79,6 +80,20 @@ describe("hotp", () => {
             const result = totp(secret, digits, input, timeStep, initialTime);
             assert.deepEqual(result, expected);
         });
+    });
+    it("totp now", async () => {
+        const secret = "12345678901234567890";
+        const digits = 6;
+
+        const response = await fetch("https://authenticationtest.com/totp/", {
+            method: "POST",
+            headers: {"content-type": "application/x-www-form-urlencoded"},
+            body: "secret=" + base32.encode(new TextEncoder().encode(secret)),
+        });
+        const data = await response.json();
+
+        const result = totp(secret, digits);
+        assert.deepEqual(result, data.code);
     });
 });
 
