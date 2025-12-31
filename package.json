@@ -1,0 +1,15 @@
+{
+    "name": "totp",
+    "scripts": {
+        "start": "tsx src",
+        "test": "tsx --test"
+    },
+    "devDependencies": {
+        "@types/node": "^25.0.3",
+        "tsx": "^4.21.0",
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "rfc4648": "^1.5.4"
+    }
+}
