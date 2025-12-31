@@ -29,7 +29,7 @@ describe("hotp", () => {
             "1b3c89f65e6c9e883012052823443f048b4332db",
             "1637409809a679dc698207310c8c7fc07290d9e5",
         ].forEach((expected, i) => {
-            const result = hmac(HMACAlgorithm.SHA1, secret, numberToBigEndianArray(i));
+            const result = hmac(secret, numberToBigEndianArray(i));
             assert.deepEqual(result, Uint8Array.from(Buffer.from(expected, "hex")));
         });
     });
@@ -54,30 +54,64 @@ describe("hotp", () => {
     it("format", () => {
         const digits = 6;
         [
-            {input: 5, expected: "000005"},
-            {input: 123, expected: "000123"},
-            {input: 0, expected: "000000"},
-            {input: 42, expected: "000042"},
-            {input: 9876, expected: "009876"},
-        ].forEach(({input, expected}) => {
-            const result = format(input, digits);
+            {time: 5, expected: "000005"},
+            {time: 123, expected: "000123"},
+            {time: 0, expected: "000000"},
+            {time: 42, expected: "000042"},
+            {time: 9876, expected: "009876"},
+        ].forEach(({time, expected}) => {
+            const result = format(time, digits);
             assert.deepEqual(result, expected);
         });
     });
-    it("totp", () => {
+    it("totp sha1", () => {
         const secret = "12345678901234567890";
         const timeStep = 30;
         const initialTime = 0;
         const digits = 8;
         [
-            {input: 59, expected: "94287082"},
-            {input: 1111111109, expected: "07081804"},
-            {input: 1111111111, expected: "14050471"},
-            {input: 1234567890, expected: "89005924"},
-            {input: 2000000000, expected: "69279037"},
-            {input: 20000000000, expected: "65353130"},
-        ].forEach(({input, expected}) => {
-            const result = totp(secret, digits, input, timeStep, initialTime);
+            {time: 59, expected: "94287082", algorithm: HMACAlgorithm.SHA1},
+            {time: 1111111109, expected: "07081804", algorithm: HMACAlgorithm.SHA1},
+            {time: 1111111111, expected: "14050471", algorithm: HMACAlgorithm.SHA1},
+            {time: 1234567890, expected: "89005924", algorithm: HMACAlgorithm.SHA1},
+            {time: 2000000000, expected: "69279037", algorithm: HMACAlgorithm.SHA1},
+            {time: 20000000000, expected: "65353130", algorithm: HMACAlgorithm.SHA1},
+        ].forEach(({time, algorithm, expected}) => {
+            const result = totp(secret, digits, time, algorithm, timeStep, initialTime);
+            assert.deepEqual(result, expected);
+        });
+    });
+    it("totp sha256", () => {
+        const secret = "12345678901234567890123456789012";
+        const timeStep = 30;
+        const initialTime = 0;
+        const digits = 8;
+        [
+            {time: 59, expected: "46119246", algorithm: HMACAlgorithm.SHA256},
+            {time: 1111111109, expected: "68084774", algorithm: HMACAlgorithm.SHA256},
+            {time: 1111111111, expected: "67062674", algorithm: HMACAlgorithm.SHA256},
+            {time: 1234567890, expected: "91819424", algorithm: HMACAlgorithm.SHA256},
+            {time: 2000000000, expected: "90698825", algorithm: HMACAlgorithm.SHA256},
+            {time: 20000000000, expected: "77737706", algorithm: HMACAlgorithm.SHA256},
+        ].forEach(({time, algorithm, expected}) => {
+            const result = totp(secret, digits, time, algorithm, timeStep, initialTime);
+            assert.deepEqual(result, expected);
+        });
+    });
+    it("totp sha512", () => {
+        const secret = "1234567890123456789012345678901234567890123456789012345678901234";
+        const timeStep = 30;
+        const initialTime = 0;
+        const digits = 8;
+        [
+            {time: 59, expected: "90693936", algorithm: HMACAlgorithm.SHA512},
+            {time: 1111111109, expected: "25091201", algorithm: HMACAlgorithm.SHA512},
+            {time: 1111111111, expected: "99943326", algorithm: HMACAlgorithm.SHA512},
+            {time: 1234567890, expected: "93441116", algorithm: HMACAlgorithm.SHA512},
+            {time: 2000000000, expected: "38618901", algorithm: HMACAlgorithm.SHA512},
+            {time: 20000000000, expected: "47863826", algorithm: HMACAlgorithm.SHA512},
+        ].forEach(({time, algorithm, expected}) => {
+            const result = totp(secret, digits, time, algorithm, timeStep, initialTime);
             assert.deepEqual(result, expected);
         });
     });

@@ -6,10 +6,10 @@ export enum HMACAlgorithm {
     SHA512 = "sha512",
 }
 
-export const hmac = (algorithm: HMACAlgorithm, secret: BinaryLike, value: BinaryLike) =>
-    Uint8Array.from(Buffer.from(createHmac(algorithm, secret)
+export const hmac = (secret: BinaryLike, value: BinaryLike, algorithm: HMACAlgorithm = HMACAlgorithm.SHA1) =>
+    new Uint8Array(createHmac(algorithm, secret)
         .update(value)
-        .digest("hex"), "hex"));
+        .digest());
 
 export const numberToBigEndianArray = (digit: number) => {
     const result = new Uint8Array(8);
@@ -41,22 +41,21 @@ export const format = (result: number, digits: number) =>
     String(result)
         .padStart(digits, "0");
 
-export const hotp = (secret: BinaryLike, digits: number, step: number) => {
-    const cipher = hmac(HMACAlgorithm.SHA1, secret, numberToBigEndianArray(step));
+export const hotp = (secret: BinaryLike, digits: number, step: number, algorithm: HMACAlgorithm = HMACAlgorithm.SHA1) => {
+    const cipher = hmac(secret, numberToBigEndianArray(step), algorithm);
     const result = truncate(cipher, digits);
 
     return format(result, digits);
 };
 
-// TODO select algo
-export const totp = (secret: BinaryLike, digits: number, time: number = Math.floor(Date.now() / 1_000), timeStep: number = 30, initialTime: number = 0) => {
+export const totp = (secret: BinaryLike, digits: number, time: number = Math.floor(Date.now() / 1_000), algorithm: HMACAlgorithm = HMACAlgorithm.SHA1, timeStep: number = 30, initialTime: number = 0) => {
     const step = Math.floor((time - initialTime) / timeStep);
-    return hotp(secret, digits, step);
+    return hotp(secret, digits, step, algorithm);
 };
 
-export const print = (secret: BinaryLike, digits: number, time: number = Math.floor(Date.now() / 1_000), timeStep: number = 30, initialTime: number = 0) => {
+export const print = (secret: BinaryLike, digits: number, time: number = Math.floor(Date.now() / 1_000), algorithm: HMACAlgorithm = HMACAlgorithm.SHA1, timeStep: number = 30, initialTime: number = 0) => {
     const execute = () => {
-        const result = totp(secret, digits, time, timeStep, initialTime);
+        const result = totp(secret, digits, time, algorithm, timeStep, initialTime);
         console.log(result);
     };
 
