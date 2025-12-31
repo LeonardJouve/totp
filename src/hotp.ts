@@ -53,8 +53,9 @@ export const totp = (secret: BinaryLike, digits: number, time: number = Math.flo
     return hotp(secret, digits, step, algorithm);
 };
 
-export const print = (secret: BinaryLike, digits: number, time: number = Math.floor(Date.now() / 1_000), algorithm: HMACAlgorithm = HMACAlgorithm.SHA1, timeStep: number = 30, initialTime: number = 0) => {
+export const print = (secret: BinaryLike, digits: number, algorithm: HMACAlgorithm = HMACAlgorithm.SHA1, timeStep: number = 30, initialTime: number = 0) => {
     const execute = () => {
+        const time = Math.floor(Date.now() / 1_000);
         const result = totp(secret, digits, time, algorithm, timeStep, initialTime);
         console.log(result);
     };
