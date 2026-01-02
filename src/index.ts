@@ -13,4 +13,3 @@ const digits = 6;
 
 const result = totp(secret, digits);
 spawn("clip").stdin.end(result);
-console.log("Done");
