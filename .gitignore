@@ -1,4 +1,6 @@
 node_modules
 lib
 dist
-*.exe
+totp-win.exe
+totp-linux
+totp-macos

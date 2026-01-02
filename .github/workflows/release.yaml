@@ -19,4 +19,7 @@ jobs:
         with:
           tag_name: build-${{ github.sha }}
           name: Build ${{ github.sha }}
-          files: totp.exe
+          files: |
+            totp-win.exe
+            totp-linux
+            totp-macos
