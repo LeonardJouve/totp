@@ -1,5 +1,4 @@
 import {base32} from "@scure/base";
-import {spawn} from "node:child_process";
 import {totp} from "./hotp";
 
 if (process.argv.length < 3) {
@@ -12,4 +11,4 @@ const secret = base32.decode(base32Secret);
 const digits = 6;
 
 const result = totp(secret, digits);
-spawn("clip").stdin.end(result);
+process.stdout.write(result);
