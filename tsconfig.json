@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es2015",
+        "moduleResolution": "node",
+        "outDir": "lib",
+        "alwaysStrict": true,
+        "allowUnreachableCode": false,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "declaration": true,
+        "types": ["node"],
+    },
+    "include": ["./src/**/*.ts"],
+}

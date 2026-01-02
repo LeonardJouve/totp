@@ -1,0 +1,20 @@
+name: Release
+
+on: push
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm i
+      - run: npm run bundle
+      - run: npm run package
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.sha }}
+          name: Build ${{ github.sha }}
+          files: totp.exe
